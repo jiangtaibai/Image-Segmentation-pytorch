@@ -45,12 +45,8 @@ class UNet(nn.Module):
 
         self.Conv_1x1 = nn.Conv2d(f, output_ch, kernel_size=1)
 
-        self.register_buffer('mean', torch.FloatTensor([0.45817]).view(1, 1))
-        self.register_buffer('std', torch.FloatTensor([0.45584]).view(1, 1))
 
     def forward(self, x):
-        # encoding path
-        x = (x - self.mean) / self.std
         x1 = self.Conv1(x)
 
         x2 = self.Maxpool(x1)
@@ -65,7 +61,6 @@ class UNet(nn.Module):
         bottleneck = self.Maxpool(x4)
         bottleneck = self.bottleneck(bottleneck)
 
-        # decoding + concat path
         d = self.Up4(bottleneck)
         d = torch.cat((x4, d), dim=1)
         d = self.Up_conv4(d)

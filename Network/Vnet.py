@@ -179,8 +179,6 @@ class VNet(nn.Module):
         self.out_conv = nn.Conv3d(n_filters, n_classes, 1, padding=0)
 
         self.dropout = nn.Dropout3d(p=0.5, inplace=False)
-        self.register_buffer('mean', torch.FloatTensor([0.45817]).view(1, 1))
-        self.register_buffer('std', torch.FloatTensor([0.45584]).view(1, 1))
         # self.__init_weight()
 
     def encoder(self, input):
@@ -238,7 +236,6 @@ class VNet(nn.Module):
         if turnoff_drop:
             has_dropout = self.has_dropout
             self.has_dropout = False
-        input = (input - self.mean) / self.std
         features = self.encoder(input)
         out = self.decoder(features)
         if turnoff_drop:
